@@ -30,13 +30,12 @@ jobs:
       - name: Install dependencies
         run: pip install pandas_market_calendars
 
-      - name: Test Alpaca API manually
+      - name: Test LINE push manually
         if: github.event_name == 'workflow_dispatch'
         env:
-          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
-          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
-          ALPACA_FEED: iex
-        run: python monitor_v23.py
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+        run: python test_line.py
 
       - name: Run scheduled monitor
         if: github.event_name == 'schedule'
