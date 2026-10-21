@@ -44,4 +44,4 @@ jobs:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
           ALPACA_FEED: iex
-        run: python monitor.py
+        run: python monitor_v23.py
