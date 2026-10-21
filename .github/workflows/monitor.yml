@@ -3,7 +3,7 @@ name: ETF Market Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/15 * * * 1-5'
+    - cron: '7,22,37,52 * * * 1-5'
 
 permissions:
   contents: read
