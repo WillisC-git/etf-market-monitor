@@ -4,10 +4,14 @@ name: ETF Market Monitor
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/15 13-16 * * 1-5'
+    - cron: '*/15 * * * 1-5'
 
 permissions:
   contents: read
+
+concurrency:
+  group: etf-market-monitor
+  cancel-in-progress: false
 
 jobs:
   monitor:
@@ -15,17 +19,26 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Check prices and volume
+      - name: Test Alpaca API manually
+        if: github.event_name == 'workflow_dispatch'
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ALPACA_FEED: iex
+        run: python test_api.py
+
+      - name: Run scheduled monitor
+        if: github.event_name == 'schedule'
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
           ALPACA_FEED: iex
         run: python monitor.py
